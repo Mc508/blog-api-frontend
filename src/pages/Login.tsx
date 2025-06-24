@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { loginSuccess } from "@/store/authSlice";
+import type { AppDispatch } from "@/store/store";
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +35,7 @@ const Login = () => {
       [name]: value,
     }));
   };
-  const handleSubmit = async () => {
+  const handleSubmit = async (dispatch: AppDispatch) => {
     const response = await axios.post(
       "http://localhost:3000/api/v1/auth/login",
       {
@@ -41,6 +43,10 @@ const Login = () => {
         password: formData.password,
       }
     );
+    const token = response.data.token;
+    dispatch(loginSuccess(token));
+    
+    localStorage.setItem("token", response.data.accessToken);
     console.log(response.data);
     console.log("Login successfully");
     navigate("/");

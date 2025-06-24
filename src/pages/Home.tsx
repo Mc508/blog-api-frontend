@@ -1,6 +1,11 @@
+import Blogs from "@/components/main/Blogs";
+
 const Home = () => {
   return (
-    <div>Home</div>
-  )
-}
-export default Home
+    <div>
+      <h1>Home</h1>
+      <Blogs />
+    </div>
+  );
+};
+export default Home;
