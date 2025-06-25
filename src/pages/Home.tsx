@@ -1,10 +1,13 @@
 import Blogs from "@/components/main/Blogs";
+import ProtectedRoute from "@/components/main/ProtectedRoute";
 
 const Home = () => {
   return (
     <div>
       <h1>Home</h1>
-      <Blogs />
+      <ProtectedRoute>
+        <Blogs />
+      </ProtectedRoute>
     </div>
   );
 };

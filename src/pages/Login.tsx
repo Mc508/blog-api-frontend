@@ -14,6 +14,7 @@ import { loginSuccess } from "@/store/authSlice";
 import type { AppDispatch } from "@/store/store";
 import axios from "axios";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 interface ILogin {
@@ -23,33 +24,43 @@ interface ILogin {
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>(); // ✅ useDispatch here
+
   const [formData, setFormData] = useState<ILogin>({
     email: "",
     password: "",
   });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
-  const handleSubmit = async (dispatch: AppDispatch) => {
-    const response = await axios.post(
-      "http://localhost:3000/api/v1/auth/login",
-      {
-        email: formData.email,
-        password: formData.password,
-      }
-    );
-    const token = response.data.token;
-    dispatch(loginSuccess(token));
-    
-    localStorage.setItem("token", response.data.accessToken);
-    console.log(response.data);
-    console.log("Login successfully");
-    navigate("/");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // ✅ prevent default form submit behavior
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/auth/login",
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
+
+      const token = response.data.accessToken;
+      console.log(token);
+      dispatch(loginSuccess(token));
+      localStorage.setItem("token", token); // ✅ use correct token
+
+      console.log("Login successful");
+      navigate("/");
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
   };
   return (
     <div className="flex items-center justify-center my-auto h-screen">
